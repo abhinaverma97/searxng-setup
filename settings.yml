@@ -35,7 +35,7 @@ server:
   base_url: false
   limiter: false
   public_instance: false
-  secret_key: changeme   # GENERATE: openssl rand -base64 32
+  secret_key: 'changeme'  # GENERATE: openssl rand -base64 32 | tr -d '\n'
   image_proxy: false
   http_protocol_version: '1.0'
   method: POST
