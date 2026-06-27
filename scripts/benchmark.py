@@ -14,13 +14,13 @@ import sys
 import time
 
 WORKING_ENGINES = [
-    "360search", "abcnyheter", "bing", "boardreader", "bpb",
-    "crowdview", "ddg definitions", "dogpile", "duckduckgo web",
-    "encyclosearch", "fynd", "gmx", "google", "mojeek", "mwmbl",
-    "openlibrary", "privacywall", "quark", "reloado", "resulthunter",
-    "searchch", "searchmysite", "seznam", "sogou", "tusksearch",
-    "vuhuv", "wiby", "wikimini", "wikipedia", "wolframalpha",
-    "yandex", "yep"
+    "360search", "abcnyheter", "ayo", "bing", "boardreader",
+    "bpb", "crowdview", "ddg definitions", "dogpile",
+    "duckduckgo web", "encyclosearch", "fynd", "gmx", "google",
+    "mojeek", "mwmbl", "openlibrary", "privacywall", "quark",
+    "reloado", "resulthunter", "searchch", "searchmysite",
+    "seznam", "sogou", "tusksearch", "vuhuv", "wiby", "wikimini",
+    "wikipedia", "wolframalpha", "yandex", "yep"
 ]
 
 SEARXNG_URL = "http://localhost:8888"
