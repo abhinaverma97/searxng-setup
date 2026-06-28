@@ -1,6 +1,10 @@
 # SearXNG Setup
 
-Self-hosted SearXNG instance — lean 6-engine config. No API keys needed.
+Self-hosted SearXNG instance with AI-powered search API for agents.
+
+- **SearXNG** — lean 6-engine meta-search, no API keys needed
+- **Agent API** — FastAPI service with raw search + Groq-powered AI analysis
+- **One command** to run everything
 
 ## Quick Start
 
@@ -8,11 +12,36 @@ Self-hosted SearXNG instance — lean 6-engine config. No API keys needed.
 docker compose up -d
 ```
 
-Open http://127.0.0.1:8888
+### Services
 
-### Customize
+| Service | URL | Description |
+|---------|-----|-------------|
+| SearXNG | http://127.0.0.1:8888 | Search engine web UI |
+| Agent API | http://127.0.0.1:8000 | API for AI agents |
+| API docs | http://127.0.0.1:8000/docs | Swagger UI |
 
-Edit `config/settings.yml`, then restart:
+### Agent API Endpoints
+
+```bash
+# Raw search results
+curl "http://127.0.0.1:8000/search?q=your+query"
+
+# AI-analyzed results (via Groq llama-3.3-70b)
+curl "http://127.0.0.1:8000/search/analyzed?q=your+query"
+
+# Health check
+curl "http://127.0.0.1:8000/health"
+```
+
+## Configuration
+
+Set your Groq API key in `.env`:
+
+```
+GROQ_API_KEY=gsk_...
+```
+
+Edit `config/settings.yml` for search engine config, then restart:
 
 ```bash
 docker compose restart core
@@ -48,12 +77,19 @@ Requires Python 3 and `curl.exe` (pre-installed on Windows).
 ## Project Structure
 
 ```
+├── api/
+│   ├── Dockerfile          FastAPI container
+│   ├── main.py             App entry + endpoints
+│   ├── search_client.py    SearXNG API client
+│   ├── analyzer.py         Groq AI analysis
+│   └── requirements.txt
 ├── config/
-│   └── settings.yml      Engine configuration
+│   └── settings.yml        Engine configuration
 ├── scripts/
-│   └── benchmark.py      Benchmarking script
-├── docker-compose.yml    Docker Compose definition
-├── .env                  Environment variables
+│   └── benchmark.py        Benchmarking script
+├── docker-compose.yml      Docker Compose definition
+├── .env.example            Environment template
+├── .env                    Environment variables (gitignored)
 ├── .gitignore
 └── README.md
 ```
@@ -62,3 +98,4 @@ Requires Python 3 and `curl.exe` (pre-installed on Windows).
 
 - [config/settings.yml](config/settings.yml) — engine configuration
 - [scripts/benchmark.py](scripts/benchmark.py) — benchmarking script
+- [api/main.py](api/main.py) — API entry point

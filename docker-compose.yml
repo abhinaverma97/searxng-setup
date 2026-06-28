@@ -15,6 +15,18 @@ services:
       - ./config/:/etc/searxng/:ro
       - core-data:/var/cache/searxng/
 
+  api:
+    container_name: searxng-api
+    build: ./api
+    restart: always
+    ports:
+      - 8000:8000
+    environment:
+      SEARXNG_URL: http://searxng-core:8888
+      GROQ_API_KEY: ${GROQ_API_KEY}
+    depends_on:
+      - core
+
   valkey:
     container_name: searxng-valkey
     image: docker.io/valkey/valkey:9-alpine
