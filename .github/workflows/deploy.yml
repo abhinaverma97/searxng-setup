@@ -53,7 +53,8 @@ jobs:
               cd /opt/vexa
               git pull origin main
             else
-              git clone https://github.com/abhinaverma97/vexa-search.git /opt/vexa
+              sudo git clone https://github.com/abhinaverma97/vexa-search.git /opt/vexa
+              sudo chown "$(whoami):$(whoami)" -R /opt/vexa
               cd /opt/vexa
             fi
 
@@ -82,4 +83,4 @@ jobs:
             sudo systemctl reload caddy 2>/dev/null || sudo systemctl enable --now caddy
 
             # pull and rebuild
-            docker compose up -d --build
+            sudo docker compose up -d --build
