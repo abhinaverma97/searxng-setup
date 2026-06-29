@@ -69,28 +69,7 @@ jobs:
             NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL
             ENVEOF
 
-            # install Caddy if missing
-            command -v caddy >/dev/null 2>&1 || {
-              sudo apt-get update -qq
-              sudo apt-get install -y -qq debian-keyring debian-archive-keyring apt-transport-https
-              curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
-              curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list
-              sudo apt-get update -qq
-              sudo apt-get install -y -qq caddy
-            }
 
-            # add Caddy entry if not present
-            if ! grep -q "vexa.itsabhi.in" /etc/caddy/Caddyfile 2>/dev/null; then
-                sudo tee -a /etc/caddy/Caddyfile > /dev/null << 'CADDYEOF'
-
-            vexa.itsabhi.in {
-                reverse_proxy localhost:3001
-            }
-            CADDYEOF
-            fi
-
-            # ensure Caddy is running
-            sudo systemctl reload caddy 2>/dev/null || sudo systemctl enable --now caddy
 
             # pull and rebuild
             sudo docker compose down
