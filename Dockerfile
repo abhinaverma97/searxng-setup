@@ -1,5 +1,5 @@
 FROM node:22-slim AS base
-RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
+RUN apt-get update -y && apt-get install -y openssl gosu && rm -rf /var/lib/apt/lists/*
 
 FROM base AS deps
 WORKDIR /app
@@ -31,4 +31,7 @@ COPY --from=builder /app/prisma.config.ts ./
 COPY docker-entrypoint.sh ./
 RUN chmod +x docker-entrypoint.sh
 
+EXPOSE 3000
+ENV PORT=3000
+ENV DATABASE_URL=file:./data/dev.db
 ENTRYPOINT ["./docker-entrypoint.sh"]
