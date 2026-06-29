@@ -1,6 +1,3 @@
-# Read the documentation before using the `docker-compose.yml` file:
-# https://docs.searxng.org/admin/installation-docker.html
-
 name: searxng
 
 services:
@@ -9,32 +6,39 @@ services:
     image: docker.io/searxng/searxng:${SEARXNG_VERSION:-latest}
     restart: always
     ports:
-      - ${SEARXNG_HOST:+${SEARXNG_HOST}:}${SEARXNG_PORT:-8080}:${SEARXNG_PORT:-8080}
+      - "${SEARXNG_PORT:-8080}:8080"
     env_file: ./.env
     volumes:
       - ./config/:/etc/searxng/:ro
       - core-data:/var/cache/searxng/
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://127.0.0.1:8080/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
 
-  api:
-    container_name: searxng-api
-    build: ./api
+  nextjs:
+    container_name: searxng-nextjs
+    build: .
     restart: always
     ports:
-      - 8000:8000
+      - 3000:3000
     environment:
-      SEARXNG_URL: http://searxng-core:8888
+      SEARXNG_URL: http://searxng-core:8080
       GROQ_API_KEY: ${GROQ_API_KEY}
-    depends_on:
-      - core
-
-  valkey:
-    container_name: searxng-valkey
-    image: docker.io/valkey/valkey:9-alpine
-    command: valkey-server --save 30 1 --loglevel warning
-    restart: always
+      AUTH_SECRET: ${AUTH_SECRET}
+      AUTH_GITHUB_ID: ${AUTH_GITHUB_ID}
+      AUTH_GITHUB_SECRET: ${AUTH_GITHUB_SECRET}
+      AUTH_GOOGLE_ID: ${AUTH_GOOGLE_ID}
+      AUTH_GOOGLE_SECRET: ${AUTH_GOOGLE_SECRET}
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL}
     volumes:
-      - valkey-data:/data/
+      - db-data:/app/data
+    depends_on:
+      core:
+        condition: service_healthy
 
 volumes:
   core-data:
-  valkey-data:
+  db-data:

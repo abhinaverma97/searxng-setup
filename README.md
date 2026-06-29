@@ -1,101 +1,36 @@
-# SearXNG Setup
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-Self-hosted SearXNG instance with AI-powered search API for agents.
+## Getting Started
 
-- **SearXNG** — lean 6-engine meta-search, no API keys needed
-- **Agent API** — FastAPI service with raw search + Groq-powered AI analysis
-- **One command** to run everything
-
-## Quick Start
+First, run the development server:
 
 ```bash
-docker compose up -d
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
 ```
 
-### Services
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-| Service | URL | Description |
-|---------|-----|-------------|
-| SearXNG | http://127.0.0.1:8888 | Search engine web UI |
-| Agent API | http://127.0.0.1:8000 | API for AI agents |
-| API docs | http://127.0.0.1:8000/docs | Swagger UI |
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-### Agent API Endpoints
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-```bash
-# Raw search results
-curl "http://127.0.0.1:8000/search?q=your+query"
+## Learn More
 
-# AI-analyzed results (via Groq llama-3.3-70b)
-curl "http://127.0.0.1:8000/search/analyzed?q=your+query"
+To learn more about Next.js, take a look at the following resources:
 
-# Health check
-curl "http://127.0.0.1:8000/health"
-```
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-## Configuration
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-Set your Groq API key in `.env`:
+## Deploy on Vercel
 
-```
-GROQ_API_KEY=gsk_...
-```
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Edit `config/settings.yml` for search engine config, then restart:
-
-```bash
-docker compose restart core
-```
-
-## Benchmark
-
-```bash
-python scripts/benchmark.py
-```
-
-Requires Python 3 and `curl.exe` (pre-installed on Windows).
-
-## Stats
-
-| Metric | Value |
-|--------|-------|
-| Working engines | 6 |
-| Avg response time | 0.5–1.4s |
-| Results/query | 8–10 |
-
-## Engines
-
-| Engine | Timeout | Weight | Avg time |
-|--------|---------|--------|----------|
-| bing | 2.0s | 3 | 0.52s |
-| vuhuv | 5.0s | 2 | 0.82s |
-| privacywall | 5.0s | 2 | 0.99s |
-| yandex | 2.0s | 2 | 1.13s |
-| dogpile | 3.0s | 2 | 1.17s |
-| gmx | 2.0s | 1 | 1.35s |
-
-## Project Structure
-
-```
-├── api/
-│   ├── Dockerfile          FastAPI container
-│   ├── main.py             App entry + endpoints
-│   ├── search_client.py    SearXNG API client
-│   ├── analyzer.py         Groq AI analysis
-│   └── requirements.txt
-├── config/
-│   └── settings.yml        Engine configuration
-├── scripts/
-│   └── benchmark.py        Benchmarking script
-├── docker-compose.yml      Docker Compose definition
-├── .env.example            Environment template
-├── .env                    Environment variables (gitignored)
-├── .gitignore
-└── README.md
-```
-
-## Related
-
-- [config/settings.yml](config/settings.yml) — engine configuration
-- [scripts/benchmark.py](scripts/benchmark.py) — benchmarking script
-- [api/main.py](api/main.py) — API entry point
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
