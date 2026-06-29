@@ -30,7 +30,7 @@ COPY --from=builder /app/prisma.config.ts ./
 
 COPY docker-entrypoint.sh ./
 RUN chmod +x docker-entrypoint.sh
-RUN npm install --no-save --no-fund --no-audit prisma@7.8.0
+COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
 USER nextjs
 EXPOSE 3000
 ENV PORT=3000
