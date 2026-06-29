@@ -22,17 +22,63 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
+    env:
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
+      AUTH_GITHUB_ID: ${{ secrets.AUTH_GITHUB_ID }}
+      AUTH_GITHUB_SECRET: ${{ secrets.AUTH_GITHUB_SECRET }}
+      AUTH_GOOGLE_ID: ${{ secrets.AUTH_GOOGLE_ID }}
+      AUTH_GOOGLE_SECRET: ${{ secrets.AUTH_GOOGLE_SECRET }}
+      NEXT_PUBLIC_APP_URL: "https://vexa.itsabhin.in"
     steps:
-      - uses: actions/checkout@v4
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.2.2
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
+          envs: GROQ_API_KEY, AUTH_SECRET, AUTH_GITHUB_ID, AUTH_GITHUB_SECRET, AUTH_GOOGLE_ID, AUTH_GOOGLE_SECRET, NEXT_PUBLIC_APP_URL
           script: |
             set -e
-            cd /opt/vexa
-            git pull origin main
-            docker compose up -d --build nextjs
-            docker compose up -d core
+
+            # install Docker if missing
+            command -v docker >/dev/null 2>&1 || {
+              curl -fsSL https://get.docker.com | sh
+              sudo usermod -aG docker ubuntu
+            }
+
+            # clone or pull repo
+            if [ -d /opt/vexa ]; then
+              cd /opt/vexa
+              git pull origin main
+            else
+              git clone https://github.com/abhinaverma97/vexa-search.git /opt/vexa
+              cd /opt/vexa
+            fi
+
+            # write .env
+            cat > .env << ENVEOF
+            GROQ_API_KEY=$GROQ_API_KEY
+            AUTH_SECRET=$AUTH_SECRET
+            AUTH_GITHUB_ID=$AUTH_GITHUB_ID
+            AUTH_GITHUB_SECRET=$AUTH_GITHUB_SECRET
+            AUTH_GOOGLE_ID=$AUTH_GOOGLE_ID
+            AUTH_GOOGLE_SECRET=$AUTH_GOOGLE_SECRET
+            NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL
+            ENVEOF
+
+            # add Caddy entry if not present
+            if ! grep -q "vexa.itsabhin.in" /etc/caddy/Caddyfile 2>/dev/null; then
+              sudo tee -a /etc/caddy/Caddyfile > /dev/null << 'CADDYEOF'
+
+            vexa.itsabhin.in {
+                reverse_proxy localhost:3000
+            }
+            CADDYEOF
+            fi
+
+            # ensure Caddy is running
+            sudo systemctl reload caddy 2>/dev/null || sudo systemctl enable --now caddy
+
+            # pull and rebuild
+            docker compose up -d --build
