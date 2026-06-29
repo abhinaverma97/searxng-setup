@@ -30,7 +30,7 @@ jobs:
       AUTH_GITHUB_SECRET: ${{ secrets.AUTH_GITHUB_SECRET }}
       AUTH_GOOGLE_ID: ${{ secrets.AUTH_GOOGLE_ID }}
       AUTH_GOOGLE_SECRET: ${{ secrets.AUTH_GOOGLE_SECRET }}
-      NEXT_PUBLIC_APP_URL: "https://vexa.itsabhin.in"
+      NEXT_PUBLIC_APP_URL: "https://vexa.itsabhi.in"
     steps:
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.2.2
@@ -80,10 +80,10 @@ jobs:
             }
 
             # add Caddy entry if not present
-            if ! grep -q "vexa.itsabhin.in" /etc/caddy/Caddyfile 2>/dev/null; then
-              sudo tee -a /etc/caddy/Caddyfile > /dev/null << 'CADDYEOF'
+            if ! grep -q "vexa.itsabhi.in" /etc/caddy/Caddyfile 2>/dev/null; then
+                sudo tee -a /etc/caddy/Caddyfile > /dev/null << 'CADDYEOF'
 
-            vexa.itsabhin.in {
+            vexa.itsabhi.in {
                 reverse_proxy localhost:3001
             }
             CADDYEOF
