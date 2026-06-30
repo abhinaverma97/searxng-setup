@@ -12,7 +12,9 @@ const jetbrains = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "Vexa — Search API for AI Agents",
   description: "A search API designed for AI agents. Raw search, AI summaries, and deep research — all through a single API key.",
-
+  icons: {
+    icon: "/logo.png",
+  },
 };
 
 export default function RootLayout({
